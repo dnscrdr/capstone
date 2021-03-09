@@ -1,0 +1,27 @@
+#import new dataset and display its content
+PROC IMPORT DATAFILE=REFFILE
+	DBMS=CSV
+	OUT=WORK.LOREAL;
+	GETNAMES=YES;
+RUN;
+
+PROC CONTENTS DATA=WORK.LOREAL; RUN;
+
+# subsetting the data set to only show which variables I want to utilize
+Data data;
+set work.loreal;
+keep ProductName CompanyID CompanyName BrandName PrimaryCategoryID PrimaryCategory SubCategory ChemicalID ChemicalName;
+run; 
+
+#filtering out a specific attribute
+if PrimaryCategory = 'Makeup Products (non-permanent)';
+run; 
+
+#creating a scatterplot to show the chemical name and company id, and grouped by the subcategory variable
+proc sgplot data=WORK.DATA;
+	scatter x=CompanyId y=ChemicalName / group=SubCategory;
+	xaxis grid;
+	yaxis grid;
+run;
+
+ods graphics / reset;
